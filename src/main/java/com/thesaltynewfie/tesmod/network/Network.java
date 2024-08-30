@@ -5,10 +5,13 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Map;
 
 import com.thesaltynewfie.tesmod.global.global;
 
 public class Network {
+    private Map<String, String> env = System.getenv();
+
     private static final HttpClient _client = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
             .connectTimeout(Duration.ofSeconds(10))
@@ -18,7 +21,7 @@ public class Network {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI(url))
                 .header("Content-Type", "application/json")
-                .header("Authorization", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiVG9ieSIsImlhdCI6MTcyNDk1MDQxNX0.ibJWN1drtK7i6igj6cCPMWbH1eUzm56OcPqzerTIywA")
+                .header("Authorization", "")
                 .GET()
                 .build();
 
@@ -31,7 +34,7 @@ public class Network {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI(url))
                 .header("Content-Type", "application/json")
-                .header("Authorization", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiVG9ieSIsImlhdCI6MTcyNDk1MDQxNX0.ibJWN1drtK7i6igj6cCPMWbH1eUzm56OcPqzerTIywA")
+                .header("Authorization", "")
                 .POST(HttpRequest.BodyPublishers.ofString(Data))
                 .build();
 

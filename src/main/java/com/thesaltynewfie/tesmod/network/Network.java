@@ -8,10 +8,9 @@ import java.time.Duration;
 import java.util.Map;
 
 import com.thesaltynewfie.tesmod.global.global;
+import io.github.cdimascio.dotenv.Dotenv;
 
 public class Network {
-    private Map<String, String> env = System.getenv();
-
     private static final HttpClient _client = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
             .connectTimeout(Duration.ofSeconds(10))

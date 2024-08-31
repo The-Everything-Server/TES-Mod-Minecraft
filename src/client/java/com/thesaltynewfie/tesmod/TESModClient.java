@@ -1,14 +1,21 @@
 package com.thesaltynewfie.tesmod;
 
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.thesaltynewfie.tesmod.commands.AuthCommand;
+import com.thesaltynewfie.tesmod.commands.DebugCommand;
+import com.thesaltynewfie.tesmod.commands.DiscordMessageCommand;
+import com.thesaltynewfie.tesmod.commands.Gift;
 import com.thesaltynewfie.tesmod.ui.ProfileGUI;
 import com.thesaltynewfie.tesmod.ui.ProfileScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.server.command.CommandManager;
 import org.lwjgl.glfw.GLFW;
 
 public class TESModClient implements ClientModInitializer {
@@ -16,6 +23,17 @@ public class TESModClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+			dispatcher.register(CommandManager.literal("auth")
+					.then(CommandManager.argument("username", StringArgumentType.string())
+							.then(CommandManager.argument("password", StringArgumentType.string())
+									.executes(context -> AuthCommand.AuthCommand(
+											StringArgumentType.getString(context, "username"),
+											StringArgumentType.getString(context, "password"),
+											context
+									)))));
+		});
+
 		keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 				"key.tesmod.profile-key",
 				InputUtil.Type.KEYSYM,

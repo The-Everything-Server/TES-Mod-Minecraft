@@ -12,6 +12,13 @@ import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.*;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import com.thesaltynewfie.tesmod.network.Network;
@@ -46,6 +53,13 @@ public class ProfileGUI extends LightweightGuiDescription {
 
             WButton button = new WButton(Text.literal("Gifts"));
             root.add(button, 0, 12, 4, 1);
+
+            WButton tradeBtn = new WButton(Text.literal("Trade"));
+            root.add(tradeBtn, 5, 12, 4, 1);
+
+            tradeBtn.setOnClick(() -> {
+                handleTrade();
+            });
         } else {
             WLabel label = new WLabel(Text.literal("Please sign in"), 0x000000);
 
@@ -59,6 +73,8 @@ public class ProfileGUI extends LightweightGuiDescription {
 
             confirm.setOnClick(() -> {
                 handleLogin(usernameField.getText(), passwordField.getText());
+                WLabel finishLabel = new WLabel(Text.literal("Close this menu and re open!"));
+                root.add(finishLabel, 0,6);
             });
 
             root.add(label, 0, 0, 2, 1);
@@ -92,5 +108,16 @@ public class ProfileGUI extends LightweightGuiDescription {
         } catch(Exception e) {
             global.LOGGER.error(e.toString());
         }
+    }
+
+    private void handleTrade() {
+        // Everything in here is debug right now, cause what better place to test this right!
+        ItemStack stack = MinecraftClient.getInstance().player.getInventory().getMainHandStack();
+
+        ItemStack stack1 = Registries.ITEM.get(Identifier.tryParse("minecraft", "dirt")).getDefaultStack();
+
+        MinecraftClient.getInstance().player.getInventory().insertStack(stack1);
+
+        global.LOGGER.info(stack1.getTranslationKey());
     }
 }

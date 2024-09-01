@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thesaltynewfie.tesmod.commands.utils.Message;
 import com.thesaltynewfie.tesmod.config.ConfigHelper;
 import com.thesaltynewfie.tesmod.global.global;
-import com.thesaltynewfie.tesmod.network.Types.Auth;
-import com.thesaltynewfie.tesmod.network.Types.Profile;
-import com.thesaltynewfie.tesmod.network.Types.Response;
-import com.thesaltynewfie.tesmod.network.Types.Token;
+import com.thesaltynewfie.tesmod.network.Types.*;
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.*;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
@@ -106,6 +103,25 @@ public class ProfileGUI extends LightweightGuiDescription {
 
             conf.setValue("api", "token", token.getToken());
         } catch(Exception e) {
+            global.LOGGER.error(e.toString());
+        }
+    }
+
+    private void handleGifts() {
+        try {
+            Response result = Network.Get("http://192.168.4.123:3000/api/minecraft/gift");
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            Order order = objectMapper.readValue(result.getBody(), Order.class);
+
+            for(int i = 0; i < order.getItems().size(); i++) {
+                String ItemID = order.getItems().get(i).getItemId();
+                int amount = order.getItems().get(i).getQuantity();
+                ItemStack stack = Registries.ITEM.get(Identifier.tryParse(ItemID)).getDefaultStack();
+                MinecraftClient.getInstance().player.getInventory().insertStack(new ItemStack(Registries.ITEM.get(Identifier.tryParse(ItemID)), amount));
+            }
+
+        } catch (Exception e) {
             global.LOGGER.error(e.toString());
         }
     }

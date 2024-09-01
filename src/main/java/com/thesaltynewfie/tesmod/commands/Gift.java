@@ -23,15 +23,11 @@ public class Gift {
             Order order = objectMapper.readValue(result.getBody(), Order.class);
 
             for(int i = 0; i < order.getItems().size(); i++) {
-                Message.gamePrint(ctx, "i: " + i);
                 String ItemID = order.getItems().get(i).getItemId();
                 int amount = order.getItems().get(i).getQuantity();
-                ItemStack stack = Registries.ITEM.get(Identifier.tryParse(ItemID)).getDefaultStack();
-                ctx.getSource().getPlayer().giveItemStack(stack);
+                ctx.getSource().getPlayer().giveItemStack(new ItemStack(Registries.ITEM.get(Identifier.tryParse(ItemID)), amount));
             }
-
         } catch (Exception e) {
-            ctx.getSource().sendFeedback(() -> Text.literal("Encountered an error: " + e.toString()), false);
             global.LOGGER.error(e.toString());
         }
         return 1;

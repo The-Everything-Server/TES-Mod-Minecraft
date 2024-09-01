@@ -7,6 +7,7 @@ import com.thesaltynewfie.tesmod.commands.utils.Message;
 import com.thesaltynewfie.tesmod.global.global;
 import com.thesaltynewfie.tesmod.network.Network;
 import com.thesaltynewfie.tesmod.network.Types.DiscordMessage;
+import com.thesaltynewfie.tesmod.network.Types.Response;
 import net.minecraft.server.command.ServerCommandSource;
 
 public class DiscordMessageCommand {
@@ -25,9 +26,9 @@ public class DiscordMessageCommand {
 
             Message.gamePrint(ctx, "Json: " + json);
 
-            String result = Network.Post("http://192.168.4.123:3000/api/discord/message", json);
+            Response resp = Network.Post("http://192.168.4.123:3000/api/discord/message", json);
 
-            Message.gamePrint(ctx, "Result: " + result);
+            Message.gamePrint(ctx, "Result: " + resp.getBody());
 
             return 1;
         } catch (Exception e) {

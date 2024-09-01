@@ -2,40 +2,50 @@ package com.thesaltynewfie.tesmod.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thesaltynewfie.tesmod.global.global;
+import org.apache.commons.configuration2.INIConfiguration;
+import org.apache.commons.configuration2.builder.fluent.Configurations;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.util.Scanner;
 
 public class ConfigHelper {
-    public static Config config;
-    private static String data = "";
-    private static ObjectMapper mapper = new ObjectMapper();
+    private INIConfiguration config;
+    private final File configFile;
 
-    public static void GetConfig() {
+    public ConfigHelper(File configFile) {
+        this.configFile = configFile;
+        loadConfig();
+    }
+
+    private void loadConfig() {
+        Configurations configs = new Configurations();
         try {
-            File conf = new File("tes_config.json");
-            Scanner reader = new Scanner(conf);
-
-            while(reader.hasNextLine()) {
-                data = data + reader.nextLine();
+            if (configFile.exists()) {
+                config = configs.ini(configFile);
+            } else {
+                config = new INIConfiguration();
+                saveConfig();
             }
-
-            reader.close();
-
-            config = mapper.readValue(data, Config.class);
-        } catch(Exception e) {
+        } catch (Exception e) {
             global.LOGGER.error(e.toString());
         }
     }
 
-    public static void CreateConfig() {
+    public void saveConfig() {
         try {
-            FileWriter writer = new FileWriter("tes_config.json");
-
-            writer.write(mapper.writeValueAsString(config));
+            config.write(new FileWriter(configFile));
         } catch (Exception e) {
             global.LOGGER.error(e.toString());
         }
+    }
+
+    public void setValue(String section, String key,  String value) {
+        config.setProperty(section + "." + key, value);
+        saveConfig();
+    }
+
+    public String getValue(String section, String key, String defaultValue) {
+        return config.getString(section + "." + key, defaultValue);
     }
 }

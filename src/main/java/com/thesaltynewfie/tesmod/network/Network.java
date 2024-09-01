@@ -1,5 +1,6 @@
 package com.thesaltynewfie.tesmod.network;
 
+import java.io.File;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -7,8 +8,11 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Map;
 
+import com.thesaltynewfie.tesmod.config.ConfigHelper;
 import com.thesaltynewfie.tesmod.global.global;
+import com.thesaltynewfie.tesmod.network.Types.Response;
 import io.github.cdimascio.dotenv.Dotenv;
+import net.fabricmc.loader.api.FabricLoader;
 
 public class Network {
     private static final HttpClient _client = HttpClient.newBuilder()
@@ -16,29 +20,41 @@ public class Network {
             .connectTimeout(Duration.ofSeconds(10))
             .build();
 
-    public static String Get(String url) throws Exception {
+    public static Response Get(String url) throws Exception {
+        File configFile = new File(FabricLoader.getInstance().getConfigDir().toFile(), "tesmod.ini");
+        ConfigHelper conf = new ConfigHelper(configFile);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI(url))
                 .header("Content-Type", "application/json")
-                .header("Authorization", "")
+                .header("Authorization", conf.getValue("api" ,"token", "none"))
                 .GET()
                 .build();
 
         HttpResponse<String> response = _client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        return response.body();
+        Response resp = new Response();
+        resp.setStatusCode(response.statusCode());
+        resp.setBody(response.body());
+
+        return resp;
     }
 
-    public static String Post(String url, String Data) throws Exception {
+    public static Response Post(String url, String Data) throws Exception {
+        File configFile = new File(FabricLoader.getInstance().getConfigDir().toFile(), "tesmod.ini");
+        ConfigHelper conf = new ConfigHelper(configFile);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI(url))
                 .header("Content-Type", "application/json")
-                .header("Authorization", "")
+                .header("Authorization", conf.getValue("api" ,"token", "none"))
                 .POST(HttpRequest.BodyPublishers.ofString(Data))
                 .build();
 
         HttpResponse<String> response = _client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        return response.body();
+        Response resp = new Response();
+        resp.setStatusCode(response.statusCode());
+        resp.setBody(response.body());
+
+        return resp;
     }
 }

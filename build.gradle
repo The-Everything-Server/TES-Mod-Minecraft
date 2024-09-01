@@ -47,6 +47,9 @@ dependencies {
 
 	modImplementation include("io.github.cottonmc:LibGui:11.1.0+1.21")
 	implementation 'io.github.cdimascio:dotenv-java:2.2.0'
+
+	implementation 'org.apache.commons:commons-configuration2:2.8.0'
+	implementation 'commons-beanutils:commons-beanutils:1.9.4'
 }
 
 processResources {

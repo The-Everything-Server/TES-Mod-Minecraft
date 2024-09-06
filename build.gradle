@@ -1,6 +1,7 @@
 plugins {
 	id 'fabric-loom' version '1.7-SNAPSHOT'
 	id 'maven-publish'
+	id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 version = project.mod_version
@@ -43,14 +44,26 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
+	include implementation ('com.fasterxml.jackson.core:jackson-core:2.15.2')
+
+	include implementation ('com.fasterxml.jackson.core:jackson-databind:2.15.2')
+
+	include implementation ('com.fasterxml.jackson.core:jackson-annotations:2.15.2')
 
 	modImplementation include("io.github.cottonmc:LibGui:11.1.0+1.21")
-	implementation 'io.github.cdimascio:dotenv-java:2.2.0'
 
-	implementation 'org.apache.commons:commons-configuration2:2.8.0'
-	implementation 'commons-beanutils:commons-beanutils:1.9.4'
+	include implementation ('org.apache.commons:commons-configuration2:2.8.0')
+
+	include implementation ('commons-beanutils:commons-beanutils:1.9.4')
+
+	include implementation ('org.apache.commons:commons-text:1.10.0')
 }
+
+shadowJar {
+	configurations = [project.configurations.shadow]
+	exclude("META-INF")
+}
+
 
 processResources {
 	inputs.property "version", project.version
@@ -76,9 +89,17 @@ java {
 
 jar {
 	from("LICENSE") {
-		rename { "${it}_${project.base.archivesName.get()}"}
+		rename { "${it}_${project.base.archivesName.get()}" }
 	}
 }
+
+//remapJar {
+//	// wait until the shadowJar is done
+//	dependsOn(shadowJar)
+//	mustRunAfter(shadowJar)
+//	// Set the input jar for the task. Here use the shadow Jar that include the .class of the transitive dependency
+//	inputFile = file(shadowJar.archivePath)
+//}
 
 // configure the maven publication
 publishing {

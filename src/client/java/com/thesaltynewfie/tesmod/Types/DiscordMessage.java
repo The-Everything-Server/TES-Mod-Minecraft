@@ -1,4 +1,4 @@
-package com.thesaltynewfie.tesmod.network.Types;
+package com.thesaltynewfie.tesmod.Types;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

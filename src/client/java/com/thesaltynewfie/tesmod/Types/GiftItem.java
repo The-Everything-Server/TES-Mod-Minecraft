@@ -1,8 +1,8 @@
-package com.thesaltynewfie.tesmod.network.Types;
+package com.thesaltynewfie.tesmod.Types;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Item {
+public class GiftItem {
     @JsonProperty("item_id")
     private String itemId;
 

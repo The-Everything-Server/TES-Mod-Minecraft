@@ -10,7 +10,6 @@ import com.thesaltynewfie.tesmod.ui.ProfileScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
@@ -32,6 +31,24 @@ public class TESModClient implements ClientModInitializer {
 											StringArgumentType.getString(context, "password"),
 											context
 									)))));
+
+			dispatcher.register(CommandManager.literal("gift")
+					.then(CommandManager.argument("code", StringArgumentType.string())
+							.executes(context -> Gift.GiftCommand(
+									StringArgumentType.getString(context, "code"),
+									context
+							))));
+
+			dispatcher.register(CommandManager.literal("discord")
+					.then(CommandManager.argument("message", StringArgumentType.string())
+							.then(CommandManager.argument("channel_id", StringArgumentType.string())
+									.executes(context -> DiscordMessageCommand.MessageCommand(
+											StringArgumentType.getString(context, "message"),
+											StringArgumentType.getString(context, "channel_id"),
+											context)))));
+
+			dispatcher.register(CommandManager.literal("debug")
+					.executes(DebugCommand::DebugCommand));
 		});
 
 		keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(

@@ -1,13 +1,11 @@
 package com.thesaltynewfie.tesmod.commands;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.thesaltynewfie.tesmod.commands.utils.Message;
-import com.thesaltynewfie.tesmod.global.global;
 import com.thesaltynewfie.tesmod.network.Network;
-import com.thesaltynewfie.tesmod.network.Types.DiscordMessage;
-import com.thesaltynewfie.tesmod.network.Types.Response;
+import com.thesaltynewfie.tesmod.Types.DiscordMessage;
+import com.thesaltynewfie.tesmod.Types.Response;
 import net.minecraft.server.command.ServerCommandSource;
 
 public class DiscordMessageCommand {
@@ -26,7 +24,7 @@ public class DiscordMessageCommand {
 
             Message.gamePrint(ctx, "Json: " + json);
 
-            Response resp = Network.Post("http://192.168.4.123:3000/api/discord/message", json);
+            Response resp = Network.Post("http://dev.thesaltynewfie.ca/api/discord/message", json);
 
             Message.gamePrint(ctx, "Result: " + resp.getBody());
 

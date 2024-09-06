@@ -1,4 +1,4 @@
-package com.thesaltynewfie.tesmod.network.Types;
+package com.thesaltynewfie.tesmod.Types;
 
 public class Token {
     private String token;

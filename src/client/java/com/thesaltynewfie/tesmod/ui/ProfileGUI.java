@@ -1,26 +1,23 @@
 package com.thesaltynewfie.tesmod.ui;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thesaltynewfie.tesmod.commands.utils.Message;
+import com.thesaltynewfie.tesmod.Types.*;
 import com.thesaltynewfie.tesmod.config.ConfigHelper;
 import com.thesaltynewfie.tesmod.global.global;
-import com.thesaltynewfie.tesmod.network.Types.*;
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.*;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import com.thesaltynewfie.tesmod.network.Network;
 
 import java.io.File;
+import java.util.List;
 
 public class ProfileGUI extends LightweightGuiDescription {
     public ProfileGUI() {
@@ -35,7 +32,7 @@ public class ProfileGUI extends LightweightGuiDescription {
 
         // grab here so we can make an error screen if the server is not connecting
         try {
-            result = Network.Get("http://192.168.4.123:3000/api/me");
+            result = Network.Get("http://dev.thesaltynewfie.ca/api/me");
             profile = mapper.readValue(result.getBody(), Profile.class);
         } catch (Exception e) {
             global.LOGGER.error(e.toString());
@@ -48,8 +45,11 @@ public class ProfileGUI extends LightweightGuiDescription {
             WLabel label2 = new WLabel(Text.literal("Currency: " + profile.getCurrency()), 0x000000);
             root.add(label2, 0, 1, 2, 1);
 
-            WButton button = new WButton(Text.literal("Gifts"));
-            root.add(button, 0, 12, 4, 1);
+            WTextField codeInput = new WTextField(Text.literal("Code"));
+            root.add(codeInput, 0, 10,4,1);
+
+            WButton giftBtn = new WButton(Text.literal("Gifts"));
+            root.add(giftBtn, 0, 12, 4, 1);
 
             WButton tradeBtn = new WButton(Text.literal("Trade"));
             root.add(tradeBtn, 5, 12, 4, 1);
@@ -57,6 +57,11 @@ public class ProfileGUI extends LightweightGuiDescription {
             tradeBtn.setOnClick(() -> {
                 handleTrade();
             });
+
+            giftBtn.setOnClick(() -> {
+                handleGifts(codeInput.getText());
+            });
+
         } else {
             WLabel label = new WLabel(Text.literal("Please sign in"), 0x000000);
 
@@ -93,36 +98,34 @@ public class ProfileGUI extends LightweightGuiDescription {
         auth.setPassword(password);
 
         try {
-            Response resp = Network.Post("http://192.168.4.123:3000/api/auth/", mapper.writeValueAsString(auth));
+            Response resp = Network.Post("http://dev.thesaltynewfie.ca/api/auth/", mapper.writeValueAsString(auth));
 
-            Token token = new Token();
-            token = mapper.readValue(resp.getBody(), Token.class);
+            Token token = mapper.readValue(resp.getBody(), Token.class);
 
             File configFile = new File(FabricLoader.getInstance().getConfigDir().toFile(), "tesmod.ini");
             ConfigHelper conf = new ConfigHelper(configFile);
 
             conf.setValue("api", "token", token.getToken());
         } catch(Exception e) {
-            global.LOGGER.error(e.toString());
+            global.LOGGER.warn(e.toString());
         }
     }
 
-    private void handleGifts() {
+    private void handleGifts(String code) {
         try {
-            Response result = Network.Get("http://192.168.4.123:3000/api/minecraft/gift");
+            Response result = Network.Get("http://dev.thesaltynewfie.ca/api/gift/minecraft/" + code);
 
             ObjectMapper objectMapper = new ObjectMapper();
             Order order = objectMapper.readValue(result.getBody(), Order.class);
 
-            for(int i = 0; i < order.getItems().size(); i++) {
-                String ItemID = order.getItems().get(i).getItemId();
-                int amount = order.getItems().get(i).getQuantity();
-                ItemStack stack = Registries.ITEM.get(Identifier.tryParse(ItemID)).getDefaultStack();
+            for(GiftItem item : order.getItems()) {
+                String ItemID = item.getItemId();
+                int amount = item.getQuantity();
                 MinecraftClient.getInstance().player.getInventory().insertStack(new ItemStack(Registries.ITEM.get(Identifier.tryParse(ItemID)), amount));
             }
 
         } catch (Exception e) {
-            global.LOGGER.error(e.toString());
+            global.LOGGER.warn(e.toString());
         }
     }
 

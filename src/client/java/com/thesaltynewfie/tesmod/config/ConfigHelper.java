@@ -1,13 +1,11 @@
 package com.thesaltynewfie.tesmod.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thesaltynewfie.tesmod.global.global;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.util.Scanner;
 
 public class ConfigHelper {
     private INIConfiguration config;

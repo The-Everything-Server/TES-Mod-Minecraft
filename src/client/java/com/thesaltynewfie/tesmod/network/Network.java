@@ -6,12 +6,9 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.Map;
 
 import com.thesaltynewfie.tesmod.config.ConfigHelper;
-import com.thesaltynewfie.tesmod.global.global;
-import com.thesaltynewfie.tesmod.network.Types.Response;
-import io.github.cdimascio.dotenv.Dotenv;
+import com.thesaltynewfie.tesmod.Types.Response;
 import net.fabricmc.loader.api.FabricLoader;
 
 public class Network {
